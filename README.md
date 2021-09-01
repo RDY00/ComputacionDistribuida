@@ -10,3 +10,5 @@ Repositorio de la materia de Computación Distribuida del Semestre 2022-1.
 ## Práctica 4 := Relojes de Lamport
 
 ## Práctica 5 := Ordenamiento bajo paso de mensajes
+
+## Práctica opcional := Implementación de un blockchain
