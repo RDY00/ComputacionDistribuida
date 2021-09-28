@@ -13,7 +13,7 @@ defmodule Consensus do
   end
 
   defp loop(state, value, miss_prob) do
-    if(state == :loop) do
+    if(state == :fail) do
       loop(state, value, miss_prob)
     receive do
       {:get_value, caller} ->
