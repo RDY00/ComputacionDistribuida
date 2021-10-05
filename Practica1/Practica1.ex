@@ -36,8 +36,6 @@ end
 
 defmodule Module4 do
 
-  #Implementar un autómata finito determista bajo intercambios de mensajes.
-
   def monstructure() do
     :ok
   end
