@@ -64,8 +64,39 @@ defmodule Module1 do
     IO.puts("La probabilidad de que salga un número entre k y n es de #{inspect prob_k}")
   end
 
+  @doc """
+    Va a separar los digitos del número.
+
+    Primero, vérifica que la entrada sea un número.
+
+    Luego, sí el número es negativo, va a añadir un atómico que represente
+    el signo - y va a continuar su ejecución con el valor absoluto del nú-
+    mero.
+
+    Si el número ya es un digito, es decir n < 10. Devuelve la lista con
+    ese dígito (Se tuvo que implementar la conversión, por que, al meter
+    n a la lista, Elixir lo transformaba automáticamente a ASCII).
+
+    Si el número aún no es un digito. Va a separar el último dígito del
+    número (que va a caer en el caso base), y va a separar el resto del
+    número. Así hará recursión sobre ambos,  concatenará la lista que
+    obtenga de esta llamada.
+  """
   def digits(n) do
-    :ok
+    cond do
+      ! is_number(n) ->
+        IO.puts("#{inspect n} no es un número.")
+        :error
+      n < 0 ->
+        [:-] ++ digits(abs(n))
+      n < 10 ->
+        n = Integer.to_string(n)
+        n = Integer.parse(n)
+        {var, _} = n
+        [var]
+      n ->
+        digits(div(n,10)) ++ digits(rem(n,10))
+    end
   end
 
 end
