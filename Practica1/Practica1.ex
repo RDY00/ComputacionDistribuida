@@ -54,7 +54,10 @@ end
 defmodule Module3 do
 
   def rev(l) do
-    :ok
+    case l do
+      [] -> []
+      [h | t] -> rev(t) ++ [h]
+    end
   end
 
   def sieve_of_erathostenes(n) do
