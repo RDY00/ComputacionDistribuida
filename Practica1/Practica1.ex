@@ -24,8 +24,26 @@ defmodule Module1 do
     end
   end
 
+  @doc """
+    El factorial de n, es el producto de los n números.
+
+    Se implemento usando casa de patrones, donde según la entrada cazará con
+    alguna de las definiciones para la función.
+
+    Se definio el caso para 0 y para 1. Convencionalmente 1, es el caso base,
+    pero si solo definimos este caso, quedaría indefinido el 0.
+
+    Para el caso de n, hace la misma evaluación que en el caso anterior.
+  """
+  def factorial(0), do: 1
+  def factorial(1), do: 1
   def factorial(n) do
-    :ok
+    if n > 1 && is_number(n) do
+      n * factorial(n-1)
+    else
+      IO.puts("La entrada #{inspect n} es inválida.")
+      :error
+    end
   end
 
   def random_probability(n) do
