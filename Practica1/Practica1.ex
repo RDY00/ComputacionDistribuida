@@ -121,6 +121,23 @@ defmodule Module2 do
       y -> mcd(y,rem(x,y))
     end
   end
+
+  @doc """
+    La forma en la que podemos saber si la ecuación a x ~= b mod n. Es caculando el mcd de a y n, si
+    este es 1, significa que a y n son primos relativos y por lo tanto tienen solución. En otro caso
+    significa que no son primos relativos y que la ecuación no tiene solución.
+
+    Para esto, se usará la función auxiliar.
+
+    (~= representa el símbolo de congruencia).
+  """
+  def solve(a,b,n) do
+    if mcd(a,n) == 1 do
+      "La ecuación #{inspect a} x ~= #{inspect b} mod #{inspect n} tiene solución."
+    else
+      "La ecuación #{inspect a} x ~= #{inspect b} mod #{inspect n} no tiene solcuión."
+    end
+  end
 end
 
 defmodule Module3 do
