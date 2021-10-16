@@ -1,7 +1,27 @@
 defmodule Module1 do
 
+  @doc """
+    Implementación de fibonacci. Para esta función se uso case, para saber
+    cual saber que caso debe aplicar de la función recursiva. Esto por que
+    necesitamos llegar a los casos base.
+
+    (Se pudo implementar también con casa de patrones directo a las funcio-
+    nes.)
+
+    Adicionalmente checa que la entrada sea un número y que sea positivo.
+  """
   def fibonacci(n) do
-    :ok
+    case n do
+      0 -> 0
+      1 -> 1
+      n ->
+        if n > 1 && is_number(n) do
+          fibonacci(n-1) + fibonacci(n-2)
+        else
+          IO.puts("La entrada #{inspect n} es inválida.")
+          :error
+        end
+    end
   end
 
   def factorial(n) do
@@ -31,7 +51,7 @@ defmodule Module3 do
   def sieve_of_erathostenes(n) do
     :ok
   end
-  
+
 end
 
 defmodule Module4 do
@@ -39,5 +59,5 @@ defmodule Module4 do
   def monstructure() do
     :ok
   end
-  
+
 end
