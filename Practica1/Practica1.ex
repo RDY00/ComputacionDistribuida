@@ -103,6 +103,10 @@ end
 
 defmodule Module2 do
 
+  def test do
+    fn -> end
+    :ok
+  end
 end
 
 defmodule Module3 do
