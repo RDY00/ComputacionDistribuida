@@ -46,11 +46,22 @@ defmodule Module1 do
     end
   end
 
+  @doc """
+    Obtiene un número aleatorio entre el 1 y el n.
+
+    Calcula cual es la probabilidad de cada uno de los números en ese rango
+    prob_num. Entonces calcula cual es la probabilidad de aparición de todo
+    el rango [k .. n].
+  """
   def random_probability(n) do
     #Dado un número n, escoger un número aleatorio en el rango [1, n], digamos k
     #y determinar cuál es la probabilidad de que salga un número aleatorio
     #entre [k, n], el chiste obtener el número aleatorio.
-    :ok
+    k = :rand.uniform(n)
+    IO.puts("Número aleatorio seleccionado: #{inspect k}")
+    prob_num = 1 / n
+    prob_k = ((n - k) * prob_num) + 0.1
+    IO.puts("La probabilidad de que salga un número entre k y n es de #{inspect prob_k}")
   end
 
   def digits(n) do
