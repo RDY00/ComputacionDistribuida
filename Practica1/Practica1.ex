@@ -103,9 +103,23 @@ end
 
 defmodule Module2 do
 
+  @doc """
+    Función test.
+  """
   def test do
     fn -> end
     :ok
+  end
+
+  @doc """
+    Función auxiliar quecalcula el MCD mediante una implementación del Al-
+    goritmo de Euclides.
+  """
+  defp mcd(x,y) do
+    case y do
+      0 -> x
+      y -> mcd(y,rem(x,y))
+    end
   end
 end
 
