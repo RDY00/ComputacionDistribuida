@@ -31,7 +31,7 @@ defmodule Module3 do
   def sieve_of_erathostenes(n) do
     :ok
   end
-  
+
 end
 
 defmodule Module4 do
@@ -39,5 +39,5 @@ defmodule Module4 do
   def monstructure() do
     :ok
   end
-  
+
 end
