@@ -53,7 +53,17 @@ end
 defmodule Module3 do
 
   def rev(l) do
-    :ok
+    case l do
+      [] -> [] # Caso base
+      [x|xs] -> rev(xs) ++ [x] # Caso recursivo
+    end
+  end
+
+  def elim_dup(l) do
+    case l do
+      [] -> []
+      [x|xs] -> [x|(for y <- elim_dup(xs), y /= x, do: y)]
+    end
   end
 
   def sieve_of_erathostenes(n) do
