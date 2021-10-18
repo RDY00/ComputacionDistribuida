@@ -21,7 +21,6 @@ defmodule Module1 do
 
 end
 
-
 defmodule Module3 do
 
   def rev(l) do
@@ -29,6 +28,10 @@ defmodule Module3 do
   end
 
   def sieve_of_erathostenes(n) do
+    :ok
+  end
+
+  def elim_dup(l) do
     :ok
   end
   
