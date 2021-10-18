@@ -42,7 +42,7 @@ defmodule Tests do
 
 
   test "solve_congruence" do
-    assert Module2.solve(5, 10, 15) == :error
+    assert Module2.solve(5, 11, 15) == :error
     assert Module2.solve(3, 2, 7) == 3
     assert Module2.solve(2, 1, 5) == 3
     assert Module2.solve(3, 8, 10) == 6
