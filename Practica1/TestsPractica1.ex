@@ -49,7 +49,11 @@ defmodule Tests do
   end
 
   test "rev" do
-
+    assert Module3.rev([]) == []
+    assert Module3.rev([1, 2, 3]) == [3, 2, 1]
+    l = [1, 2, 3]
+    rev_l = Module3.rev(l)
+    assert Module3.rev([3, | l]) == [3, 2, 1, 3]
   end
 
   test "sieve_of_erathostenes" do
@@ -57,7 +61,7 @@ defmodule Tests do
     assert Module3.sieve_of_erathostenes(20) == [2, 3, 5, 7, 11, 13, 17, 19]
     random = :rand.uniform(1000)
     primes = Module3.sieve_of_erathostenes(random)
-    num_primes = trunc(n / :math.log(n))
+    num_primes = trunc(random / :math.log(random))
     assert num_primes <= Enum.count(primes) <= num_primes+1
   end
 
