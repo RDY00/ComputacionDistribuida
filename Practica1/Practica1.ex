@@ -57,8 +57,20 @@ defmodule Module2 do
     fn() -> :ok
   end
 
-  def solve(a, b, c) do
+  def solve(a, b, n) do
+    case mcd(a,n) do
+      1 -> :ok
+      _ -> :error
+    end
+  end
 
+  #funcion para encontrar el maximo comun divisor
+  defp mcd(a, b) do
+    mcd(b, rem(a,b))
+  end
+
+  defp mcd(a,0) do
+    abs(a)
   end
 
 end
