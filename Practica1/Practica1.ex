@@ -37,9 +37,9 @@ defmodule Module1 do
     end
 
     d = div(n,10) # Division entera entre 1 (Como quitar la unidad)
-    r = res(n,10) # Residuo entre 10 (Nos da la unidad que quitamos)
+    r = rem(n,10) # Residuo entre 10 (Nos da la unidad que quitamos)
 
-    if d = 0 do
+    if d == 0 do
       [r] # Si d es 0, n ya es un digito y r = n
     else
       # Si no, tiene al menos dos, r es la unidad de n y d el resto
@@ -52,9 +52,10 @@ end
 
 
 defmodule Module2 do
-  #funcion llamada test/0, el cual cree una funcion lambda y regrese un :ok
+
+  # funcion llamada test/0, el cual cree una funcion lambda y regrese un :ok
   def test() do
-    fn() -> :ok
+    fn () -> :ok end
   end
 
   def solve(a, b, n) do
@@ -64,13 +65,13 @@ defmodule Module2 do
     end
   end
 
-  #funcion para encontrar el maximo comun divisor
-  defp mcd(a, b) do
-    mcd(b, rem(a,b))
+  # funcion para encontrar el maximo comun divisor
+  defp mcd(a, 0) do
+    abs(a)
   end
 
-  defp mcd(a,0) do
-    abs(a)
+  defp mcd(a, b) do
+    mcd(b, rem(a,b))
   end
 
 end
@@ -87,12 +88,26 @@ defmodule Module3 do
   def elim_dup(l) do
     case l do
       [] -> []
-      [x|xs] -> [x|(for y <- elim_dup(xs), y /= x, do: y)]
+      [x|xs] -> [x|(for y <- elim_dup(xs), y != x, do: y)]
     end
   end
 
   def sieve_of_erathostenes(n) do
-    :ok
+    sieve_of_erathostenes((for x <- 2..n, do: x), n)
+  end
+
+  def sieve_of_erathostenes([x|xs], n) do
+    # Quitamos los multiplos de a de l = xs
+    l = for i <- xs, rem(i,x) != 0, do: i
+
+    # Si a^2 < n, aplicamos recursividad con la 
+    # sublista que ya no tiene sus multiplos, si no
+    # Devolvemos x y la lista sin los multiplos de x
+    if x*x < n do
+      [x | sieve_of_erathostenes(l, n)]
+    else
+      [x | l]
+    end
   end
 
 end
