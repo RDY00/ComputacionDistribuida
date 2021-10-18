@@ -59,10 +59,10 @@ defmodule Tests do
   test "sieve_of_erathostenes" do
     assert Module3.sieve_of_erathostenes(10) == [2, 3, 5, 7]
     assert Module3.sieve_of_erathostenes(20) == [2, 3, 5, 7, 11, 13, 17, 19]
-    random = :rand.uniform(1000)
-    primes = Module3.sieve_of_erathostenes(random)
-    num_primes = trunc(random / :math.log(random))
-    assert num_primes <= Enum.count(primes) <= num_primes+1
+    known_primes = [2131, 2293, 2437, 2621, 2749, 2909, 3083, 3259, 7727, 6841, 6481, 6311, 6143, 5953, 99371, 91193, 93719, 999331]
+    p = Enum.random(known_primes)
+    primes_til_n = Module3.sieve_of_erathostenes(Enum.random(p))
+    assert Enum.count(primes_til_n) == p-1 
   end
 
   test "elim_dup" do
