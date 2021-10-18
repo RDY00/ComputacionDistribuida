@@ -6,7 +6,7 @@ defmodule Module1 do
       :error
     end
 
-    if n < 2 do 
+    if n < 2 do
       n # Casos Base
     else
       fibonacci(n-1) + fibonacci(n-2) # Caso Recursivo
@@ -44,8 +44,21 @@ defmodule Module1 do
     else
       # Si no, tiene al menos dos, r es la unidad de n y d el resto
       # Aplicamos recursividad con d
-      digits(d) ++ [r] 
+      digits(d) ++ [r]
     end
+  end
+
+end
+
+
+defmodule Module2 do
+  #funcion llamada test/0, el cual cree una funcion lambda y regrese un :ok
+  def test() do
+    fn() -> :ok
+  end
+
+  def solve(a, b, c) do
+
   end
 
 end
@@ -69,7 +82,7 @@ defmodule Module3 do
   def sieve_of_erathostenes(n) do
     :ok
   end
-  
+
 end
 
 defmodule Module4 do
@@ -77,5 +90,5 @@ defmodule Module4 do
   def monstructure() do
     :ok
   end
-  
+
 end
