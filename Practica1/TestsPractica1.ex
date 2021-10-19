@@ -53,7 +53,7 @@ defmodule Tests do
     assert Module3.rev([1, 2, 3]) == [3, 2, 1]
     l = [1, 2, 3]
     rev_l = Module3.rev(l)
-    assert Module3.rev([3, | l]) == [3, 2, 1, 3]
+    assert Module3.rev([3 | l]) == [3, 2, 1, 3]
   end
 
   test "sieve_of_erathostenes" do
