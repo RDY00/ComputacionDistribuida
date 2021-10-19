@@ -77,7 +77,7 @@ defmodule Tests do
   end
 
   test "mostructure" do
-    monstr = Module4.monstructure()
+    monstr = Module4.monstructure() #Sé que inicialmente están vacías las EDDs
     # ---- INICIO DE PRUEBAS DE LISTAS ----- #
     send(monstr, {:put_list, 1})
     send(monstr, {:get_list_size, self()})
