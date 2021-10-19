@@ -30,6 +30,7 @@ defmodule Tests do
   test "digits" do
     assert Module1.digits(0) == [0]
     assert Module1.digits(10) == [1, 0]
+    assert Module1.digits(1023) == [1, 0, 2, 3]
     assert Module1.digits(1724) == [1, 7, 2, 4]
     random = :rand.uniform(10000)
     pow = :math.floor(:math.log10(random))
