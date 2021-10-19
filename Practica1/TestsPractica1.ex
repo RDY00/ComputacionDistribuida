@@ -10,7 +10,7 @@ defmodule Tests do
   use ExUnit.Case, async: true
 
   test "fibonacci" do
-    assert Module1.fibonacci(0) == 1
+    assert Module1.fibonacci(0) == 0
     assert Module1.fibonacci(1) == 1
     n = :rand.uniform(10)
     assert Module1.fibonacci(n) == (Module1.fibonacci(n-1) + Module1.fibonacci(n-2))
