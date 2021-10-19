@@ -61,8 +61,12 @@ defmodule Tests do
     assert Module3.sieve_of_erathostenes(20) == [2, 3, 5, 7, 11, 13, 17, 19]
     known_primes = [2131, 2293, 2437, 2621, 2749, 2909, 3083, 3259, 7727, 6841, 6481, 6311, 6143, 5953, 99371, 91193, 93719, 999331]
     p = Enum.random(known_primes)
-    primes_til_n = Module3.sieve_of_erathostenes(p)
-    assert Enum.count(primes_til_n) == p-1
+    primes_til_p = Module3.sieve_of_erathostenes(p)
+    Enum.each(known_primes, fn pp ->
+      if pp <= p do
+	assert Enum.member?(primes_til_p, pp)
+      end
+    end)
   end
 
   test "elim_dup" do
