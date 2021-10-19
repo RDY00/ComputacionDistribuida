@@ -117,7 +117,7 @@ defmodule Tests do
     send(monstr, {:map_put, 1, 10})
     send(monstr, {:map_get, 1, self()})
     assert reception() == 10
-    send(monstr, {:map_lambda, 1, (fn x, y -> x * y end), 20})
+    send(monstr, {:map_lambda, 1, (fn x, y -> x * y end), 20})#lambda.(params) 
     send(monstr, {:map_get, 1, self()})
     assert reception() == 200
     # ---- FIN DE PRUEBAS DE MAPS ----#
