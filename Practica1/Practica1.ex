@@ -32,11 +32,9 @@ defmodule Module1 do
   end
 
   def digits(n) do
-    if n < 0 do # Si es negativo, cambiamos el signo
-      digits(-1*n)
-    end
+    n = abs(n) # Para quitar el signo
 
-    d = div(n,10) # Division entera entre 1 (Como quitar la unidad)
+    d = div(n,10) # Division entera entre 10 (Como quitar la unidad)
     r = rem(n,10) # Residuo entre 10 (Nos da la unidad que quitamos)
 
     if d == 0 do
@@ -115,7 +113,11 @@ defmodule Module3 do
   end
 
   def sieve_of_erathostenes(n) do
-    sieve_of_erathostenes((for x <- 2..n, do: x), n)
+    if n < 2 do
+      []
+    else
+      sieve_of_erathostenes((for x <- 2..n, do: x), n)
+    end
   end
 
   defp sieve_of_erathostenes([x|xs], n) do
