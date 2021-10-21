@@ -59,10 +59,15 @@ defmodule Module2 do
   end
 
   def solve(a, b, n) do
-    case mcd(a,n) do
-      1 -> :ok
-      _ -> :error
+    {g,x,y} = mcde(a,n)
+
+    if rem(b,g) == 0 do
+      x1 = x * div(b,g)
+      rem(x1, n) # Para obtener la solucion mas chica
+    else
+      :error
     end
+
   end
 
   # funcion para encontrar el maximo comun divisor
@@ -115,9 +120,7 @@ end
 defmodule Module4 do
 
   def monstructure() do
-    receive do
-      m -> monstructure([], {}, MapSet.new(), %{})
-    end
+    spawn(fn -> monstructure([], {}, MapSet.new(), %{}) end)
   end
 
   # monstructure con las estructuras de datos
