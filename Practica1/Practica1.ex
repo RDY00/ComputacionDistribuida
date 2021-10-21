@@ -60,6 +60,7 @@ defmodule Module2 do
 
   def solve(a, b, n) do
     case mcd(a,n) do
+        if (rem(b, mdc(a,n)) == 0)
       1 -> :ok
       _ -> :error
     end
@@ -72,6 +73,15 @@ defmodule Module2 do
 
   defp mcd(a, b) do
     mcd(b, rem(a,b))
+  end
+  
+  defp mcde(0,b) do
+    {b,0,1}
+  end
+
+  defp mcde(a, b) do
+    {g,x,y} = mcde(rem(b,a), a)
+        {g, y - div(b,a)*x, x}
   end
 
 end
