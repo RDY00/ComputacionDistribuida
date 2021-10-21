@@ -70,22 +70,26 @@ defmodule Module2 do
 
   end
 
-  # funcion para encontrar el maximo comun divisor
-  defp mcd(a, 0) do
-    abs(a)
-  end
+# IMPLEMENTADO DENTRO DE mcde
+#  # funcion para encontrar el maximo comun divisor
+#  defp mcd(a, 0) do
+#    abs(a)
+#  end
+#
+#  defp mcd(a, b) do
+#    mcd(b, rem(a,b))
+#  end
 
-  defp mcd(a, b) do
-    mcd(b, rem(a,b))
-  end
-  
-  defp mcde(0,b) do
-    {b,0,1}
-  end
-
+  # Algoritmo Extendido de Euclides
+  # Devuelve una tupla {mcd(a,b), x, y} donde x y y
+  # cumplen que ax + by = 
   defp mcde(a, b) do
-    {g,x,y} = mcde(rem(b,a), a)
+    case {a,b} do
+      {0,b} -> {b,0,1}
+      {a,b} -> 
+        {g,x,y} = mcde(rem(b,a), a)
         {g, y - div(b,a)*x, x}
+    end
   end
 
 end
