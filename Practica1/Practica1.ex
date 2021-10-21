@@ -118,7 +118,7 @@ defmodule Module3 do
     sieve_of_erathostenes((for x <- 2..n, do: x), n)
   end
 
-  def sieve_of_erathostenes([x|xs], n) do
+  defp sieve_of_erathostenes([x|xs], n) do
     # Quitamos los multiplos de a de l = xs
     l = for i <- xs, rem(i,x) != 0, do: i
 
