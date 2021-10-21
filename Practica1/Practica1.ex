@@ -156,12 +156,43 @@ defmodule Module4 do
       {:put_tuple, n} ->
         mostructure(l, Tuple.append(t,n), ms, m)
 
+      # MENSAJES DE LOS MAPSETS ---------------------------
+
+      # Revisa si e esta en ms y lo devuelve
+      {:mapset_contains, e, sender} ->
+        send(sender, {:contains_mapset, MapSet.member?(ms,e)})
         mostructure(l, t, ms, m)
-      {:get_tuple, sender} ->
-        mostructure(l, t, ms, m)
-      {:get_tuple, sender} ->
-        mostructure(l, t, ms, m)
+
+      # Agrega e a ms
+      {:mapset_add, e} ->
+        mostructure(l, t, MapSet.put(ms,e), m)
       
+      # Devuelve el tamaño de ms
+      {:mapset_size, sender} ->
+        send(sender, {:size_mapset, map_size(ms)})
+        mostructure(l, t, ms, m)
+
+      # MENSAJES DE LOS MAPS ------------------------------
+
+      # Agrega e con llave k en m
+      {:map_put, k, e} ->
+        mostructure(l, t, ms, Map.put(m,k,e))
+
+      # Envia el elemento con llave k
+      {:map_get, k, sender} ->
+        send(sender, Map.get(m,k))
+        mostructure(l, t, ms, m)
+
+      # Cambia el elemento con llave k por aplicar 
+      {:map_lambda, k, f, b} ->
+        a = Map.get(m,k)
+        new_elem = f(a,b)
+        mostructure(l, t, ms, Map.put(m,k,new_elem))
+      
+      _ -> 
+        :error
+        mostructure(l, t, ms, m)
+        
     end
   end
 
@@ -185,4 +216,10 @@ defmodule Module4 do
     end
   end
 
+  # FUNCIONES AUXILIARES PARA MAPSETS ---------------------------------------
+
+  # Devuelve el tamaño del MapSet
+  defp map_size(ms) do
+    list_size(for x <- ms, do: x)
+  end
 end
