@@ -98,7 +98,7 @@ defmodule Module3 do
   def elim_dup(l) do
     case l do
       [] -> []
-      [x|xs] -> [x|(for y <- elim_dup(xs), y != x, do: y)]
+      [x|xs] -> [x | (for y <- elim_dup(xs), y != x, do: y)]
     end
   end
 
@@ -125,7 +125,111 @@ end
 defmodule Module4 do
 
   def monstructure() do
-    :ok
+    receive do
+      m -> monstructure([], {}, MapSet.new(), %{})
+    end
   end
 
+  # monstructure con las estructuras de datos
+  # l: Lista, t: Tupla, ms: MapSet, m: Map
+  defp mostructure(l, t, ms, m) ->
+    receive do
+      # MENSAJES DE LAS LISTAS ----------------------------
+
+      # Agregar elemento al final
+      {:put_list, n} ->
+        mostructure(l ++ [n], t, ms, m)
+
+      # Enviar tamaño a quien lo pidio
+      {:get_list_size, sender} ->
+        send(sender, {:list_size, list_size(l)})
+        mostructure(l, t, ms, m)
+
+      # Eliminar e de l (Solo elimina la primera instancia de izquierda a derecha)
+      {:rem_list, e} ->
+        mostructure(remove_from_list(l,e), t, ms, m)
+
+      # MENSAJES DE LAS TUPLAS ----------------------------
+
+      # Devuelve la tupla
+      {:get_tuple, sender} ->
+        send(sender, {:tuple_get, t})
+        mostructure(l, t, ms, m)
+
+      # Devuelve la tupla como lista
+      {:tup_to_list, sender} ->
+        tupList = for x <- t, do: x
+        send(sender, {:tup_to_list, tupList})
+        mostructure(l, t, ms, m)
+
+      # Agrega elemento al final de la tupla (Crea otra)
+      {:put_tuple, n} ->
+        mostructure(l, Tuple.append(t,n), ms, m)
+
+      # MENSAJES DE LOS MAPSETS ---------------------------
+
+      # Revisa si e esta en ms y lo devuelve
+      {:mapset_contains, e, sender} ->
+        send(sender, {:contains_mapset, MapSet.member?(ms,e)})
+        mostructure(l, t, ms, m)
+
+      # Agrega e a ms
+      {:mapset_add, e} ->
+        mostructure(l, t, MapSet.put(ms,e), m)
+      
+      # Devuelve el tamaño de ms
+      {:mapset_size, sender} ->
+        send(sender, {:size_mapset, map_size(ms)})
+        mostructure(l, t, ms, m)
+
+      # MENSAJES DE LOS MAPS ------------------------------
+
+      # Agrega e con llave k en m
+      {:map_put, k, e} ->
+        mostructure(l, t, ms, Map.put(m,k,e))
+
+      # Envia el elemento con llave k
+      {:map_get, k, sender} ->
+        send(sender, Map.get(m,k))
+        mostructure(l, t, ms, m)
+
+      # Cambia el elemento con llave k por aplicar 
+      {:map_lambda, k, f, b} ->
+        a = Map.get(m,k)
+        new_elem = f(a,b)
+        mostructure(l, t, ms, Map.put(m,k,new_elem))
+      
+      _ -> 
+        :error
+        mostructure(l, t, ms, m)
+        
+    end
+  end
+
+  # FUNCIONES AUXILIARES PARA LISTAS ---------------------------------------
+
+  # Remueve de l la primera instancia de e, si existe, y
+  # regresa la lista modificia, y e no esta, devuelve l
+  defp remove_from_list(l, e) do
+    case l do
+      [] -> []
+      [e | xs] -> xs
+      [x | xs] -> [x | remove_from_list(xs, e)]
+    end
+  end
+
+  # Devuelve el tamaño de una lista
+  defp list_size(l) do
+    case l do
+      [] -> 0
+      [x | xs] -> 1 + list_size(xs)
+    end
+  end
+
+  # FUNCIONES AUXILIARES PARA MAPSETS ---------------------------------------
+
+  # Devuelve el tamaño del MapSet
+  defp map_size(ms) do
+    list_size(for x <- ms, do: x)
+  end
 end
