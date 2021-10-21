@@ -27,7 +27,7 @@ defmodule Module1 do
     #Dado un número n, escoger un número aleatorio en el rango [1, n], digamos k
     #y determinar cuál es la probabilidad de que salga un número aleatorio
     #entre [k, n], el chiste obtener el número aleatorio.
-    k = :random.uniform(n) # Numero alearotorio entre 1 y n
+    k = :rand.uniform(n) # Numero alearotorio entre 1 y n
     (n-k+1) / n # La proba deseada
   end
 
@@ -55,11 +55,11 @@ defmodule Module2 do
 
   # funcion llamada test/0, el cual cree una funcion lambda y regrese un :ok
   def test() do
-    fn () -> :ok end
+    fn -> :ok end
   end
 
   def solve(a, b, n) do
-    {g,x,y} = mcde(a,n)
+    {g,x,_} = mcde(a,n)
 
     if rem(b,g) == 0 do
       x1 = x * div(b,g)
@@ -138,76 +138,76 @@ defmodule Module4 do
 
   # monstructure con las estructuras de datos
   # l: Lista, t: Tupla, ms: MapSet, m: Map
-  defp mostructure(l, t, ms, m) ->
+  defp monstructure(l, t, ms, m) do
     receive do
       # MENSAJES DE LAS LISTAS ----------------------------
 
       # Agregar elemento al final
       {:put_list, n} ->
-        mostructure(l ++ [n], t, ms, m)
+        monstructure(l ++ [n], t, ms, m)
 
       # Enviar tamaño a quien lo pidio
       {:get_list_size, sender} ->
         send(sender, {:list_size, list_size(l)})
-        mostructure(l, t, ms, m)
+        monstructure(l, t, ms, m)
 
       # Eliminar e de l (Solo elimina la primera instancia de izquierda a derecha)
       {:rem_list, e} ->
-        mostructure(remove_from_list(l,e), t, ms, m)
+        monstructure(remove_from_list(l,e), t, ms, m)
 
       # MENSAJES DE LAS TUPLAS ----------------------------
 
       # Devuelve la tupla
       {:get_tuple, sender} ->
         send(sender, {:tuple_get, t})
-        mostructure(l, t, ms, m)
+        monstructure(l, t, ms, m)
 
       # Devuelve la tupla como lista
       {:tup_to_list, sender} ->
         tupList = for x <- t, do: x
         send(sender, {:tup_to_list, tupList})
-        mostructure(l, t, ms, m)
+        monstructure(l, t, ms, m)
 
       # Agrega elemento al final de la tupla (Crea otra)
       {:put_tuple, n} ->
-        mostructure(l, Tuple.append(t,n), ms, m)
+        monstructure(l, Tuple.append(t,n), ms, m)
 
       # MENSAJES DE LOS MAPSETS ---------------------------
 
       # Revisa si e esta en ms y lo devuelve
       {:mapset_contains, e, sender} ->
         send(sender, {:contains_mapset, MapSet.member?(ms,e)})
-        mostructure(l, t, ms, m)
+        monstructure(l, t, ms, m)
 
       # Agrega e a ms
       {:mapset_add, e} ->
-        mostructure(l, t, MapSet.put(ms,e), m)
+        monstructure(l, t, MapSet.put(ms,e), m)
       
       # Devuelve el tamaño de ms
       {:mapset_size, sender} ->
-        send(sender, {:size_mapset, map_size(ms)})
-        mostructure(l, t, ms, m)
+        send(sender, {:size_mapset, mapset_size(ms)})
+        monstructure(l, t, ms, m)
 
       # MENSAJES DE LOS MAPS ------------------------------
 
       # Agrega e con llave k en m
       {:map_put, k, e} ->
-        mostructure(l, t, ms, Map.put(m,k,e))
+        monstructure(l, t, ms, Map.put(m,k,e))
 
       # Envia el elemento con llave k
       {:map_get, k, sender} ->
         send(sender, Map.get(m,k))
-        mostructure(l, t, ms, m)
+        monstructure(l, t, ms, m)
 
       # Cambia el elemento con llave k por aplicar 
       {:map_lambda, k, f, b} ->
         a = Map.get(m,k)
-        new_elem = f(a,b)
-        mostructure(l, t, ms, Map.put(m,k,new_elem))
+        new_elem = f.(a,b)
+        monstructure(l, t, ms, Map.put(m,k,new_elem))
       
       _ -> 
         :error
-        mostructure(l, t, ms, m)
+        monstructure(l, t, ms, m)
         
     end
   end
@@ -219,7 +219,7 @@ defmodule Module4 do
   defp remove_from_list(l, e) do
     case l do
       [] -> []
-      [e | xs] -> xs
+      [x | xs] when x == e -> xs
       [x | xs] -> [x | remove_from_list(xs, e)]
     end
   end
@@ -228,14 +228,15 @@ defmodule Module4 do
   defp list_size(l) do
     case l do
       [] -> 0
-      [x | xs] -> 1 + list_size(xs)
+      [_ | xs] -> 1 + list_size(xs)
     end
   end
 
   # FUNCIONES AUXILIARES PARA MAPSETS ---------------------------------------
 
   # Devuelve el tamaño del MapSet
-  defp map_size(ms) do
+  defp mapset_size(ms) do
     list_size(for x <- ms, do: x)
   end
+
 end
