@@ -20,7 +20,7 @@ defmodule Module1 do
   end
 
   def factorial(n) do # Caso recursivo
-    n * (n-1)
+    n * factorial(n-1)
   end
 
   def random_probability(n) do
@@ -62,33 +62,37 @@ defmodule Module2 do
     {g,x,_} = mcde(a,n)
 
     if rem(b,g) == 0 do
-      x1 = x * div(b,g)
-      rem(x1, n) # Para obtener la solucion mas chica
+      mod(x * div(b,g), n) # Para que la respuesta este entre 0 y n-1
     else
       :error
     end
 
   end
 
-# IMPLEMENTADO DENTRO DE mcde
-#  # funcion para encontrar el maximo comun divisor
-#  defp mcd(a, 0) do
-#    abs(a)
-#  end
-#
-#  defp mcd(a, b) do
-#    mcd(b, rem(a,b))
-#  end
+  # Modulo para funcionar con negativos y 0
+  defp mod(x,y) when x > 0, do: rem(x,y);
+  defp mod(x,y) when x < 0, do: rem(x,y) + y;
+  defp mod(0,_), do: 0;
+
+  # IMPLEMENTADO DENTRO DE mcde
+  #  # funcion para encontrar el maximo comun divisor
+  #  defp mcd(a, 0) do
+  #    abs(a)
+  #  end
+  #
+  #  defp mcd(a, b) do
+  #    mcd(b, rem(a,b))
+  #  end
 
   # Algoritmo Extendido de Euclides
   # Devuelve una tupla {mcd(a,b), x, y} donde x y y
-  # cumplen que ax + by = 
+  # cumplen que ax + by = mdc(a,b)
   defp mcde(a, b) do
     case {a,b} do
       {0,b} -> {b,0,1}
       {a,b} -> 
         {g,x,y} = mcde(rem(b,a), a)
-        {g, y - div(b,a)*x, x}
+        {g, y - div(b,a) * x, x}
     end
   end
 
@@ -164,8 +168,7 @@ defmodule Module4 do
 
       # Devuelve la tupla como lista
       {:tup_to_list, sender} ->
-        tupList = for x <- t, do: x
-        send(sender, {:tup_to_list, tupList})
+        send(sender, {:tuple_as_list, Tuple.to_list(t)})
         monstructure(l, t, ms, m)
 
       # Agrega elemento al final de la tupla (Crea otra)
@@ -196,7 +199,7 @@ defmodule Module4 do
 
       # Envia el elemento con llave k
       {:map_get, k, sender} ->
-        send(sender, Map.get(m,k))
+        send(sender, {:get_map, Map.get(m,k)})
         monstructure(l, t, ms, m)
 
       # Cambia el elemento con llave k por aplicar 
