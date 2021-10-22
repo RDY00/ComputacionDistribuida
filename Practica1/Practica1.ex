@@ -2,7 +2,7 @@ defmodule Module1 do
 
   # Fibonacci ---------------------------
   def fibonacci(n) do
-    # Suponemos que n > 0
+    # Suponemos que n >= 0
     if n < 2 do
       n
     else
