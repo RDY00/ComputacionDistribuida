@@ -2,14 +2,11 @@ defmodule Module1 do
 
   # Fibonacci ---------------------------
   def fibonacci(n) do
-    if n < 0 do # No se aceptan negativos
-      :error
-    end
-
-    if n < 2 do
-      n # Casos Base
-    else
-      fibonacci(n-1) + fibonacci(n-2) # Caso Recursivo
+    case n do
+      0 -> 0
+      1 -> 1
+      n when n > 0 -> fibonacci(n-1) + fibonacci(n-2)
+      _ -> :error # No se aceptan negativos
     end
   end
 
