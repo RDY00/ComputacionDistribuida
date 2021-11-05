@@ -36,12 +36,12 @@ defmodule Graph do
       u == nil or v == nil -> graph
       u == v -> graph
       true ->
-	u_neighs = Map.get(graph, u)
-	new_u_neighs = MapSet.put(u_neighs, v)
-	graph = Map.put(graph, u, new_u_neighs)
-	v_neighs = Map.get(graph, v)
-	new_v_neighs = MapSet.put(v_neighs, u)
-	Map.put(graph, v, new_v_neighs)
+        u_neighs = Map.get(graph, u)
+        new_u_neighs = MapSet.put(u_neighs, v)
+        graph = Map.put(graph, u, new_u_neighs)
+        v_neighs = Map.get(graph, v)
+        new_v_neighs = MapSet.put(v_neighs, u)
+        Map.put(graph, v, new_v_neighs)
     end
   end
 
