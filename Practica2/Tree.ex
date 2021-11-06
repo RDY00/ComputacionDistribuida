@@ -6,7 +6,17 @@ defmodule Tree do
 
   defp loop() do
     receive do
-      {:broadcast, tree, i, caller} -> :ok #Aquí va su código.
+      {:broadcast, tree, i, caller} ->
+        l = Map.get(tree, 2*i+1)
+        r = Map.get(tree, 2*i+2)
+
+        case {l,r} do
+          {nil, nil} -> send(caller, {self(), :ok_bc})
+          {l,r} -> 
+            if l, do: send(l, {:broadcast, tree, 2*i+1, caller})
+            if r, do: send(r, {:broadcast, tree, 2*i+2, caller})
+        end
+
       {:convergecast, tree, i, caller} -> :ok #Aquí va su código.
     end
   end
@@ -20,7 +30,7 @@ defmodule Tree do
   end
 
   def broadcast(tree, n) do
-    Enum.each(0..n-1, fn x -> Map.get(tree, x) |> send({:broadcast, tree, x}))
+    Map.get(tree, 0) |> send({:broadcast, tree, 0, self()})
   end
 
   def convergecast(tree, n) do
