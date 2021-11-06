@@ -90,7 +90,7 @@ defmodule Module2 do
         {g, y - div(b,a) * x, x}
     end
   end
-
+  
 end
 
 defmodule Module3 do
