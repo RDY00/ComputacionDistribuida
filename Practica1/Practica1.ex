@@ -91,6 +91,57 @@ defmodule Module2 do
     end
   end
 
+  defp aux_digits(n) do
+    if n in 0..9 do
+      [n]
+    else
+      [rem(n, 10) | aux_digits(div(n, 10))]
+    end
+  end
+end
+
+defmodule Module2 do
+
+  def test do
+    #:ok Esto está mal.
+    fn -> :ok end
+  end
+
+  def solve(a, b, n) do
+    if is_prime_relative?(a, n) do
+      rem(b*mult_inv(a, n), n)
+    else
+      :error
+    end
+  end
+
+  defp mult_inv(a, n) do
+    case egcd(a, n, 1, 0, 0, 1) do
+      {_, x, _} ->
+	if x <= 0 do
+	  x + n
+	else
+	  x
+	end
+    end
+  end
+
+  defp egcd(o_r, r, o_s, s, o_t, t) do
+    if r == 0 do
+      {o_r, o_s, o_t}
+    else
+      quot = div(o_r, r)
+      egcd(r, (o_r - quot*r), s, (o_s - quot*s), t, (o_t - quot*t))
+    end
+  end
+  
+  defp is_prime_relative?(x, y)  do
+    if y == 0 do
+      x == 1
+    else
+      is_prime_relative?(y, rem(x, y))
+    end
+  end
 end
 
 defmodule Module3 do
