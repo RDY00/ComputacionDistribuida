@@ -6,7 +6,14 @@ defmodule Graph do
 
   defp loop(state) do
     receive do
-      {:bfs, graph, new_state} -> :ok
+      {:bfs, graph, new_state} ->
+        cond do 
+          state == -1 || new_state < state ->
+            Enum.each(Map.get(graph, self()), fn v -> send(v, {:bfs, graph, new_state+1}) end)
+            loop(new_state)
+          true ->
+            loop(state)
+        end
       {:dfs, graph, new_state} -> :ok
       {:get_state, caller} -> send(caller, {self, state}) #Estos mensajes solo los manda el main.
     end
@@ -50,7 +57,9 @@ defmodule Graph do
   end
   
   def bfs(graph, src) do
-    :ok
+    send(src, {:bfs, graph, 0})
+    Process.sleep(5000)
+    Enum.each(Map.keys(graph), fn v -> send(v, {:get_state, self()}) end)
   end
 
   def bfs(graph) do
@@ -58,7 +67,7 @@ defmodule Graph do
   end
     
   def dfs(graph, src) do
-    :ok
+    send(src, {:dfs, graph, 0})
   end
 
   def dfs(graph) do
