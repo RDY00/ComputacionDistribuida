@@ -68,6 +68,8 @@ defmodule Graph do
     
   def dfs(graph, src) do
     send(src, {:dfs, graph, 0})
+    Process.sleep(5000)
+    Enum.each(Map.keys(graph), fn v -> send(v, {:get_state, self()}) end)
   end
 
   def dfs(graph) do
