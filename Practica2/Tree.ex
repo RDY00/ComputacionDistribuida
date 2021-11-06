@@ -20,8 +20,7 @@ defmodule Tree do
   end
 
   def broadcast(tree, n) do
-    #Aquí va su código.
-    :ok
+    Enum.each(0..n-1, fn x -> Map.get(tree, x) |> send({:broadcast, tree, x}))
   end
 
   def convergecast(tree, n) do

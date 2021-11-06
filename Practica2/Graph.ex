@@ -60,6 +60,8 @@ defmodule Graph do
     send(src, {:bfs, graph, 0})
     Process.sleep(5000)
     Enum.each(Map.keys(graph), fn v -> send(v, {:get_state, self()}) end)
+    n = length(Map.keys(graph))
+    Enum.map(1..n, fn _ -> receive do y -> y end end)
   end
 
   def bfs(graph) do
@@ -70,6 +72,8 @@ defmodule Graph do
     send(src, {:dfs, graph, 0})
     Process.sleep(5000)
     Enum.each(Map.keys(graph), fn v -> send(v, {:get_state, self()}) end)
+    n = length(Map.keys(graph))
+    Enum.map(1..n, fn _ -> receive do y -> y end end)
   end
 
   def dfs(graph) do
