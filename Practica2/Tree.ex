@@ -11,7 +11,7 @@ defmodule Tree do
         r = Map.get(tree, 2*i+2)
 
         case {l,r} do
-          {nil, nil} -> send(caller, {self(), :ok_bc})
+          {nil, nil} -> send(caller, {self(), :ok})
           {l,r} -> 
             if l, do: send(l, {:broadcast, tree, 2*i+1, caller})
             if r, do: send(r, {:broadcast, tree, 2*i+2, caller})
@@ -28,7 +28,7 @@ defmodule Tree do
         end
 
         case i do
-          0 -> send(caller, {self(), :ok_cc})
+          0 -> send(caller, {self(), :ok})
           i ->
             p = div(i-1, 2)
             Map.get(tree, p) |> send({:convergecast, tree, p, caller})

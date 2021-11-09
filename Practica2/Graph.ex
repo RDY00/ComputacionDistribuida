@@ -14,8 +14,27 @@ defmodule Graph do
           true ->
             loop(state)
         end
-      {:dfs, graph, new_state} -> :ok
-      {:get_state, caller} -> send(caller, {self, state}) #Estos mensajes solo los manda el main.
+
+      {:dfs, graph, new_state, parents} ->
+        # Mi padre
+        my_p = Map.get(parents, self())
+        # Vertices no visitados
+        nv = Map.get(graph, self())
+             |> Enum.filter(fn x -> !Map.has_key?(parents, x) end)
+
+        case nv do
+          [] ->
+            if my_p != self(), do: send(my_p, {:dfs, graph, new_state-1, parents})
+          [x|_] ->
+            # nv = Enum.into(nv, MapSet.new())
+            # graph = Map.put(graph, self(), nv)
+            parents = Map.put(parents, x, self())
+            send(x, {:dfs, graph, new_state+1, parents})
+        end
+
+        if state == -1, do: loop(new_state), else: loop(state)
+
+      {:get_state, caller} -> send(caller, {self(), state}) #Estos mensajes solo los manda el main.
     end
   end
   
@@ -69,7 +88,7 @@ defmodule Graph do
   end
     
   def dfs(graph, src) do
-    send(src, {:dfs, graph, 0})
+    send(src, {:dfs, graph, 0, %{src => src}})
     Process.sleep(5000)
     Enum.each(Map.keys(graph), fn v -> send(v, {:get_state, self()}) end)
     n = length(Map.keys(graph))
