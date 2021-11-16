@@ -13,7 +13,7 @@ defmodule Tree do
         case {l,r} do
           {nil, nil} -> send(caller, {self(), :ok})
           {l,r} -> 
-            if l, do: send(l, {:broadcast, tree, 2*i+1, caller})
+            send(l, {:broadcast, tree, 2*i+1, caller})
             if r, do: send(r, {:broadcast, tree, 2*i+2, caller})
         end
 
@@ -48,9 +48,6 @@ defmodule Tree do
             if i != 0, do: send(caller, {self(), :ok})
           {ln, nil} ->
             send(ln, msg.(l))
-            receive do {:broadconvergecast, _, _, _} -> :ok end
-          {nil, rn} ->
-            send(rn, msg.(r))
             receive do {:broadconvergecast, _, _, _} -> :ok end
           {ln, rn} ->
             send(ln, msg.(l))
