@@ -62,6 +62,33 @@ defmodule Tree do
         end
 
         loop()
+
+      {:convergebroadcast, tree, i, caller} ->
+        if Map.get(tree, 2*i + 2) do
+          receive do
+            {:convergebroadcast, _, _, _} -> :ok
+          end
+        end
+
+        case i do
+          0 -> send(caller, {self(), :ok})
+          _ ->
+            p = div(i-1, 2)
+            Map.get(tree, p) |> send({:convergebroadcast, tree, p, caller})
+            receive do {:convergebroadcast, _, _, _} -> :ok end
+        end
+
+        l = Map.get(tree, 2*i+1)
+        r = Map.get(tree, 2*i+2)
+
+        case {l,r} do
+          {nil, nil} -> send(caller, {self(), :ok})
+          {l,r} -> 
+            send(l, {:convergebroadcast, tree, 2*i+1, caller})
+            if r, do: send(r, {:convergebroadcast, tree, 2*i+2, caller})
+        end
+
+        loop()
     end
   end
 
@@ -88,5 +115,11 @@ defmodule Tree do
     Map.get(tree, 0) |> send({:broadconvergecast, tree, 0, self()})
     Enum.map(0..div(n+1, 2), fn _ -> receive do x -> x end end)
   end
-  
+
+  def convergebroadcast(tree, n) do
+    first_leaf = n - div(n+1, 2)
+    Enum.each(first_leaf..n-1, fn x -> Map.get(tree, x) |> send({:convergebroadcast, tree, x, self()}) end)
+    Enum.map(0..div(n+1, 2), fn _ -> receive do x -> x end end)
+  end
+
 end
