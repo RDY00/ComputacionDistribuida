@@ -45,7 +45,7 @@ defmodule Tree do
 
         case {Map.get(tree, l), Map.get(tree, r)} do
           {nil, nil} -> 
-            if i != 0, do: send(caller, {self(), :ok})
+            send(caller, {self(), :ok})
           {ln, nil} ->
             send(ln, msg.(l))
             receive do {:broadconvergecast, _, _, _} -> :ok end
