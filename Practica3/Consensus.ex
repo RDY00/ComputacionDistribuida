@@ -15,13 +15,15 @@ defmodule Consensus do
   defp loop(state, value, miss_prob) do
     if(state == :fail) do
       loop(state, value, miss_prob)
+    end
     receive do
       {:get_value, caller} ->
 	send(caller, value)
+      #Aquí se pueden definir más mensajes.
     after
-      1000 -> :ok
+      1000 -> :ok #Aquí analizar porqué está esto aquí.
     end
-    case value do
+    case state do
       :start ->
 	chosen = :rand.uniform(10000)
 	if(rem(chosen, miss_prob) == 0) do
@@ -35,7 +37,7 @@ defmodule Consensus do
   end
 
   def consensus(processes) do
-    Process.sleep(5000)
+    Process.sleep(10000)
     #Aquí va su código, deben de regresar el valor unánime decidido
     #por todos los procesos.
     :ok
