@@ -29,9 +29,39 @@ defmodule Tree do
 
         case i do
           0 -> send(caller, {self(), :ok})
-          i ->
+          _ ->
             p = div(i-1, 2)
             Map.get(tree, p) |> send({:convergecast, tree, p, caller})
+        end
+
+        loop()
+
+      {:broadconvergecast, tree, i, caller} ->
+        l = 2*i+1
+        r = 2*i+2
+        p = div(i-1, 2)
+        # Mini fabrica de mensajes UwU 
+        msg = &({:broadconvergecast, tree, &1, caller})
+
+        case {Map.get(tree, l), Map.get(tree, r)} do
+          {nil, nil} -> 
+            if i != 0, do: send(caller, {self(), :ok})
+          {ln, nil} ->
+            send(ln, msg.(l))
+            receive do {:broadconvergecast, _, _, _} -> :ok end
+          {nil, rn} ->
+            send(rn, msg.(r))
+            receive do {:broadconvergecast, _, _, _} -> :ok end
+          {ln, rn} ->
+            send(ln, msg.(l))
+            send(rn, msg.(r))
+            receive do {:broadconvergecast, _, _, _} -> :ok end
+            receive do {:broadconvergecast, _, _, _} -> :ok end
+        end
+
+        case i do
+          0 -> send(caller, {self(), :ok})
+          _ -> Map.get(tree, p) |> send(msg.(p))
         end
 
         loop()
@@ -55,6 +85,11 @@ defmodule Tree do
     first_leaf = n - div(n+1, 2)
     Enum.each(first_leaf..n-1, fn x -> Map.get(tree, x) |> send({:convergecast, tree, x, self()}) end)
     receive do x -> x end
+  end
+
+  def broadconvergecast(tree, n) do
+    Map.get(tree, 0) |> send({:broadconvergecast, tree, 0, self()})
+    Enum.map(0..div(n+1, 2), fn _ -> receive do x -> x end end)
   end
   
 end
