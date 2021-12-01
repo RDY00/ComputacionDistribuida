@@ -8,7 +8,7 @@ defmodule Consensus do
     #todos los hilos tengan el mismo número, el cual va a ser enviado vía un
     #mensaje al hilo principal.
     Enum.map(1..n, fn _ ->
-      spawn(fn -> loop(:start, 0, :rand.uniform(10)), end)
+      spawn(fn -> loop(:start, 0, :rand.uniform(10)) end)
     end)
     #Agregar código es válido.
   end
@@ -21,19 +21,19 @@ defmodule Consensus do
     # Termina código inamovible.
     receive do
       {:get_value, caller} ->
-	send(caller, value) #No modificar.
+	      send(caller, value) #No modificar.
       #Aquí se pueden definir más mensajes.
     after
       1000 -> :ok #Aquí analizar porqué está esto aquí.
     end
     case state do
       :start ->
-	chosen = :rand.uniform(10000)
-	if(rem(chosen, miss_prob) == 0) do
-	  loop(:fail, chosen, miss_prob)
-	else
-	  loop(:active, chosen, miss_prob)
-	end
+        chosen = :rand.uniform(10000)
+        if(rem(chosen, miss_prob) == 0) do
+          loop(:fail, chosen, miss_prob)
+        else
+          loop(:active, chosen, miss_prob)
+        end
       :fail -> loop(:fail, value, miss_prob)
       :active -> :ok #Aquí va su código.
     end
