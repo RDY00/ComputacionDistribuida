@@ -23,6 +23,8 @@ defmodule Consensus do
       {:get_value, caller} ->
 	      send(caller, value) #No modificar.
       #Aquí se pueden definir más mensajes.
+      {:agreement, _, _, new_value} ->
+        loop(:active, new_value, miss_prob)
     after
       1000 -> :ok #Aquí analizar porqué está esto aquí.
     end
@@ -42,7 +44,57 @@ defmodule Consensus do
 
   def loop2() do
     # TODO: Terminar funcion para procesos auxiliares del arbol
-    :ok
+    # lamda que obtiene el valor de un proceso
+    get_val = fn x ->
+      if x do
+        send(x, {:get_value, self()})
+        receive do value -> value after 1000 -> :fail end
+      else
+        :fail
+      end
+    end
+
+    receive do
+      # Mensaje que solo hacen los padres de los principales
+      {:init, tree, i} ->
+        f_leaf = n - div(n, 2) - 1 # La ultima es n-1
+        l = Map.get(tree, 2*i+1)
+        r = Map.get(tree, 2*i+2)
+        p = div(i-1, 2)
+
+        if f_leaf <= i && i < n do
+          val1 = get_val.(l)
+          val2 = get_val.(r)
+          Map.get(p) |> send({:consensus, tree, p, min(value1, value2)})
+
+      # Mensaje hacia arriba (convergecast)
+      {:consensus, tree, i, value1} ->
+        receive do  
+          {:consensus, tree, value2} ->
+            value = min(value1, value2)
+            case i do
+              0 -> 
+                l = Map.get(tree, 1)
+                r = Map.get(tree, 2)
+
+                send(l, {:agreement, tree, 1, value})
+                if r, do: send(r, {:agreement, tree, 2, value})
+
+              _ -> 
+                p = div(i-1, 2)
+                Map.get(p) |> send({:agreement, tree, p, value})
+            end
+        end
+
+      # Mensajes hacia abajo (broadcast)
+      {:agreement, tree, i, value} ->
+        l = Map.get(tree, 2*i+1)
+        r = Map.get(tree, 2*i+2)
+        send(l, {:agreement, tree, 2*i+1, value})
+        if r, do: send(r, {:agreement, tree, 2*i+2, value})
+
+    end
+    loop2()    
   end
 
   #* Era igual que agregar, por eso las uni en una sola -- Fer UmU
@@ -54,8 +106,9 @@ defmodule Consensus do
 
   def consensus(processes) do
     n = length(processes)
-    tree = create_tree(Enum.map(1..n-1, fn _ -> spawn(fn -> loop2() end) end), %{}, 0)
+    tree = create_tree(Enum.map(0..n, fn _ -> spawn(fn -> loop2() end) end), %{}, 0)
     tree = create_tree(processes, tree, n-1)
+    Enum.each(0..n, fn i -> Map.get(i) |> send({:init, tree, i}) end)
     Process.sleep(10000)
     #Aquí va su código, deben de regresar el valor unánime decidido
     #por todos los procesos.
