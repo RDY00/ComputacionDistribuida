@@ -11,20 +11,8 @@ defmodule Consensus do
       spawn(fn -> loop(:start, 0, :rand.uniform(10)) end)
     end)
     #Agregar código es válido.
-
-    #Crear arbol con nuestros procesos y de hijos tengan a los procesos de arriba
-    #Crear n-1 procesos
-
   end
-
-  defp create_tree([], tree, _) do
-    tree
-  end
-
-  defp create_tree([pid | l], tree, pos) do
-    create_tree(l, Map.put(tree, pos, pid), (pos+1))
-  end
-
+  
   defp loop(state, value, miss_prob) do
     #inicia código inamovible.
     if(state == :fail) do
@@ -53,30 +41,24 @@ defmodule Consensus do
   end
 
   def loop2() do
-    # Mensajes para hijos y consenso
-    # Raiz manda mensaje a hijos como broadcast
+    # TODO: Terminar funcion para procesos auxiliares del arbol
     :ok
   end
 
-  def agregar([], tree, _) do
-    tree
-  end
-
-  def agregar([h|t], tree, i) do
-    tree = Map.put(tree, i, h)
-    agregar(t, tree, i+1)
+  #* Era igual que agregar, por eso las uni en una sola -- Fer UmU
+  defp create_tree(processes, tree, pos) do
+    case processes do
+      [] -> tree
+      [pid|l] -> create_tree(l, Map.put(tree, pos, pid), (pos+1))
   end
 
   def consensus(processes) do
-    # crear arbol
     n = length(processes)
     tree = create_tree(Enum.map(1..n-1, fn _ -> spawn(fn -> loop2() end) end), %{}, 0)
-    tree = agregar(processes, tree, n-1)
-    # Process.sleep(10000)
-    #Recuperar valor de algun proceso
+    tree = create_tree(processes, tree, n-1)
+    Process.sleep(10000)
     #Aquí va su código, deben de regresar el valor unánime decidido
     #por todos los procesos.
-    tree
   end
 
 end
