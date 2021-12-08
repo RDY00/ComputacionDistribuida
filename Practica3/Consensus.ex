@@ -47,17 +47,36 @@ defmodule Consensus do
           loop(:active, chosen, miss_prob)
         end
       :fail -> loop(:fail, value, miss_prob)
-      :active -> loop(:active, chosen, miss_prob)
+      :active -> loop(:active, value, miss_prob)
       #Aquí va su código.
     end
   end
 
+  def loop2() do
+    # Mensajes para hijos y consenso
+    # Raiz manda mensaje a hijos como broadcast
+    :ok
+  end
+
+  def agregar([], tree, _) do
+    tree
+  end
+
+  def agregar([h|t], tree, i) do
+    tree = Map.put(tree, i, h)
+    agregar(t, tree, i+1)
+  end
+
   def consensus(processes) do
-    Process.sleep(10000)
+    # crear arbol
+    n = length(processes)
+    tree = create_tree(Enum.map(1..n-1, fn _ -> spawn(fn -> loop2() end) end), %{}, 0)
+    tree = agregar(processes, tree, n-1)
+    # Process.sleep(10000)
     #Recuperar valor de algun proceso
     #Aquí va su código, deben de regresar el valor unánime decidido
     #por todos los procesos.
-    :ok
+    tree
   end
 
 end
