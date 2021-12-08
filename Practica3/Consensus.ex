@@ -11,6 +11,18 @@ defmodule Consensus do
       spawn(fn -> loop(:start, 0, :rand.uniform(10)) end)
     end)
     #Agregar código es válido.
+
+    #Crear arbol con nuestros procesos y de hijos tengan a los procesos de arriba
+    #Crear n-1 procesos
+
+  end
+
+  defp create_tree([], tree, _) do
+    tree
+  end
+
+  defp create_tree([pid | l], tree, pos) do
+    create_tree(l, Map.put(tree, pos, pid), (pos+1))
   end
 
   defp loop(state, value, miss_prob) do
@@ -35,15 +47,17 @@ defmodule Consensus do
           loop(:active, chosen, miss_prob)
         end
       :fail -> loop(:fail, value, miss_prob)
-      :active -> :ok #Aquí va su código.
+      :active -> loop(:active, chosen, miss_prob)
+      #Aquí va su código.
     end
   end
 
   def consensus(processes) do
     Process.sleep(10000)
+    #Recuperar valor de algun proceso
     #Aquí va su código, deben de regresar el valor unánime decidido
     #por todos los procesos.
     :ok
   end
-  
+
 end
