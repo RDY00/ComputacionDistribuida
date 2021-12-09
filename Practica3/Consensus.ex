@@ -21,7 +21,7 @@ defmodule Consensus do
     # Termina código inamovible.
     receive do
       {:get_value, caller} ->
-	      send(caller, value) #No modificar.
+        send(caller, value) #No modificar.
       #Aquí se pueden definir más mensajes.
       {:agreement, _, _, new_value} ->
         loop(:active, new_value, miss_prob)
@@ -42,7 +42,7 @@ defmodule Consensus do
     end
   end
 
-  def loop2() do
+  defp loop2() do
     receive do
       # Mensaje que solo hacen los padres de los principales
       {:init, tree, i, n} ->
@@ -65,12 +65,19 @@ defmodule Consensus do
           l >= n-1 -> 
             value1 = get_val.(Map.get(tree, l))
             value2 = get_val.(Map.get(tree, r))
-            Map.get(tree, p) |> send({:consensus, tree, p, min(value1, value2)})
-          r >= n-1 ->
-            value = get_val.(Map.get(tree, r))
-            Map.get(tree, p) |> send({:consensus, tree, p, value})
-          true -> :ok
-        end
+            cond do
+              n < 3 -> 
+                Map.get(tree, l) |> send({:agreement, tree, l, min(value1, value2)})
+                if r < 2*n-1, do: Map.get(tree, r) |> send({:agreement, tree, r, min(value1, value2)})
+              true -> 
+                Map.get(tree, p) |> send({:consensus, tree, p, min(value1, value2)})
+            end
+        r >= n-1 ->
+          value = get_val.(Map.get(tree, r))
+          Map.get(tree, p) |> send({:consensus, tree, p, value})
+        true -> :ok
+      end
+      loop2()
 
       # Mensaje hacia arriba (convergecast)
       {:consensus, tree, i, value1} ->
@@ -89,6 +96,7 @@ defmodule Consensus do
                 Map.get(tree, p) |> send({:consensus, tree, p, value})
             end
         end
+        loop2()    
 
       # Mensajes hacia abajo (broadcast)
       {:agreement, tree, i, value} ->
@@ -98,7 +106,6 @@ defmodule Consensus do
         if r, do: send(r, {:agreement, tree, 2*i+2, value})
 
     end
-    loop2()    
   end
 
   defp create_tree(processes, tree, pos) do
@@ -110,9 +117,9 @@ defmodule Consensus do
 
   def consensus(processes) do
     n = length(processes)
-    tree = create_tree(Enum.map(1..n-1, fn _ -> spawn(fn -> loop2() end) end), %{}, 0)
-    tree = create_tree(processes, tree, n-1)
     if n > 1 do
+      tree = create_tree(Enum.map(1..n-1, fn _ -> spawn(fn -> loop2() end) end), %{}, 0)
+      tree = create_tree(processes, tree, n-1)
       Enum.map(0..n-2, fn i -> Map.get(tree, i) |> send({:init, tree, i, n}) end)
     end
     Process.sleep(10000)
