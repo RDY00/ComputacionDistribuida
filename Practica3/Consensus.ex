@@ -125,16 +125,18 @@ defmodule Consensus do
     Process.sleep(10000)
     #Aquí va su código, deben de regresar el valor unánime decidido
     #por todos los procesos.
-    vals = Enum.map(processes, fn x -> 
-        send(x, {:get_value, self()})
-        receive do y -> y after 1000 -> :fail end
-        end
-      )
-      |> Enum.reject(&(&1 == :fail))
 
-    if length(vals) > 0 do
-      Enum.at(vals, 0)
-    end
+    # vals = Enum.map(processes, fn x -> 
+    #     send(x, {:get_value, self()})
+    #     receive do y -> y after 1000 -> :fail end
+    #     end
+    #   )
+    #   |> Enum.reject(&(&1 == :fail))
+
+    # if length(vals) > 0 do
+    #   Enum.at(vals, 0)
+    # end
+    :ok
   end
 
 end
