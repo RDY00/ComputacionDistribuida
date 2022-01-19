@@ -20,10 +20,11 @@ defmodule SlidingWindow do
   def sender_loop(package, n, k) do
     receive do
       {:start, recvr} ->
-        map_package(%{}, package, 0) |> send_package(recvr, n, k, 0)
+        map_package(%{},package,0) |> send_package(recvr, n, k, 0)
         sender_loop(package, n, k)
 
-      {:end, pid} -> send(pid, package)
+      {:end, pid} ->
+        send(pid, package)
       
       _ -> sender_loop(package, n, k)
     end
@@ -32,21 +33,23 @@ defmodule SlidingWindow do
   defp map_package(map, package, i) do
     case package do
       [] -> map
-      [h|l] -> map_package(Map.put(map, i, {h,false,false}), l, i+1)
+      [h|l] -> map_package(Map.put(map,i,{h,false,false}), l, i+1)
     end
   end
 
   defp send_package(package, recvr, n, k, pos) do
     # Encuentra el siguiente mensaje no que ha sido confirmado
     if pos == n do
+ 
       send(recvr, :end_of_package)
       receive do 
-        :ack_eop -> :ok
+        :ack_eop -> IO.puts("End") 
         _ -> :error  
       end 
     else
       {_,_,ack} = Map.get(package, pos)
       if ack do
+ 
         send_package(package, recvr, n, k, pos+1)
       else
         # Envia todos los de la ventana que no han sido enviados
@@ -56,8 +59,9 @@ defmodule SlidingWindow do
           {:ack_elem, i} ->
             {elem,_,_} = Map.get(package_mod, i)
             temp = Map.put(package_mod,i,{elem, true, true}) 
+ 
+ 
             send_package(temp, recvr, n, k, pos)
-
           _ -> :error
         end
       end
@@ -65,15 +69,22 @@ defmodule SlidingWindow do
   end
 
   defp send_window_items(package, recvr, n, k, pos, i) do
+ 
     if i == k or pos+i == n do
+ 
       package
     else
+ 
+ 
       {e, snd, ack} = Map.get(package, pos+i)
       if not snd do
         send(recvr, {:pkg_elem, e, pos+i})
         temp = Map.put(package, pos+i, {e,true,ack})
+
+ 
         send_window_items(temp, recvr, n, k, pos, i+1)
       else
+ 
         send_window_items(package, recvr, n, k, pos, i+1)
       end
     end
@@ -82,9 +93,7 @@ defmodule SlidingWindow do
   def recvr_loop(sender) do
     send(sender, {:start, self()})
     package_map = get_package(sender, %{})
-    n = length(Map.keys(package_map))
-    
-    package = Enum.map(0..n-1, fn i -> Map.get(package_map, i) end)
+    package = Enum.map(package_map, fn {_,y} -> y end)
 
     receive do
       {:end, pid} -> send(pid, package)
@@ -106,33 +115,9 @@ defmodule SlidingWindow do
 
   # ESTO LO PUSE YO PARA PROBAR
   def test() do
-    {s,r} = new(:rand.uniform(1000))
-    Process.sleep(1000)
+    {s,r} = new(10)
+    Process.sleep(3000)
     send(s,{:end,self()})
     send(r,{:end,self()})
-
-    receive do
-      x ->
-        IO.inspect(x)
-        receive do
-          y ->
-            IO.inspect(x)
-            x == y
-        end
-    end
   end
-
-  def multiple_test(0) do
-      IO.puts("---------------- DONE ----------------")
-  end
-
-  def multiple_test(num_test) do
-    x = test()
-    if not x do
-      IO.puts("---------------- FAIL ----------------")
-    else
-      multiple_test(num_test - 1)
-    end
-  end
-
 end
