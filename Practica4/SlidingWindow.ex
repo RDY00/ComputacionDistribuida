@@ -122,16 +122,16 @@ defmodule SlidingWindow do
     end
   end
 
-  def multiple_test(0) do
+  def n_test(0) do
       IO.puts("---------------- DONE ----------------")
   end
 
-  def multiple_test(num_test) do
+  def n_test(num_test) do
     x = test()
     if not x do
       IO.puts("---------------- FAIL ----------------")
     else
-      multiple_test(num_test - 1)
+      n_test(num_test - 1)
     end
   end
 
