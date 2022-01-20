@@ -14,7 +14,7 @@ defmodule SlidingWindow do
     sender = spawn(fn -> sender_loop(package, n, k) end)
     recvr = spawn(fn -> recvr_loop(sender) end)
     # Usamos esto para poder usar esta funcion en las pruebas
-    # {sender, recvr}
+    {sender, recvr}
   end
 
   def sender_loop(package, n, k) do
@@ -56,7 +56,7 @@ defmodule SlidingWindow do
         receive do
           {:ack_elem, i} ->
             {elem,_,_} = Map.get(package_mod, i)
-            send_package(Map.put(package_mod,i,{elem, true, true}) , recvr, n, k, pos)
+            send_package(Map.put(package_mod,i,{elem, true, true}), recvr, n, k, pos)
 
           _ -> :error
         end
