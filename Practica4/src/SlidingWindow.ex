@@ -14,7 +14,7 @@ defmodule SlidingWindow do
     sender = spawn(fn -> sender_loop(package, n, k) end)
     recvr = spawn(fn -> recvr_loop(sender) end)
     # Usamos esto para poder usar esta funcion en las pruebas
-    {sender, recvr}
+    # {sender, recvr}
   end
 
   def sender_loop(package, n, k) do
